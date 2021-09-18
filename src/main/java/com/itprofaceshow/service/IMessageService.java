@@ -4,7 +4,7 @@ import com.itprofaceshow.dto.MessageDTO;
 
 public interface IMessageService extends IBaseService{
     MessageDTO findAll();
-    MessageDTO findById(Long id);
+    MessageDTO getById(Long id);
     MessageDTO save(MessageDTO messageDto);
     MessageDTO update(MessageDTO messageDto);
     MessageDTO delete(Long id);
