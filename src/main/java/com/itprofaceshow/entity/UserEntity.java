@@ -36,6 +36,9 @@ public class UserEntity extends BaseEntity{
     @Column(name = "status")
     private String status;
 
+    @Column(name = "token", columnDefinition = "TEXT")
+    private String token;
+
     @OneToMany(mappedBy = "hostUser")
     private List<RoomEntity> rooms = new ArrayList<>();
 

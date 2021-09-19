@@ -11,9 +11,7 @@ import java.util.List;
 @Getter @Setter
 public class BaseDTO {
     private Date createdDate;
-    private String createdBy;
     private Date modifiedDate;
-    private String modifiedBy;
 
     private HttpStatus httpStatus;
     private String message;
