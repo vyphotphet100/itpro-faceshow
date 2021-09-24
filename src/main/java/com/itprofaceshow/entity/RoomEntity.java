@@ -24,4 +24,10 @@ public class RoomEntity extends BaseEntity{
 
     @OneToMany(mappedBy = "room")
     private List<MessageEntity> messages = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "joinedRooms")
+    private List<UserEntity> joinedUsers = new ArrayList<>();
+
+    @Column(name = "name", columnDefinition = "TEXT")
+    private String name;
 }

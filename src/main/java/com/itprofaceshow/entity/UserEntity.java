@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserEntity extends BaseEntity{
+public class UserEntity extends BaseEntity {
     @Id
     @Column(name = "username")
     private String username;
@@ -44,5 +44,12 @@ public class UserEntity extends BaseEntity{
 
     @OneToMany(mappedBy = "user")
     private List<MessageEntity> messages = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "join_user_room",
+            joinColumns = @JoinColumn(name = "username"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
+    private List<RoomEntity> joinedRooms = new ArrayList<>();
 
 }
