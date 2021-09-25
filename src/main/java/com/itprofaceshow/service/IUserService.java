@@ -8,4 +8,6 @@ public interface IUserService extends IBaseService{
     UserDTO save(UserDTO userDto);
     UserDTO update(UserDTO userDto);
     UserDTO delete(String username);
+
+    UserDTO login(String username, String password);
 }

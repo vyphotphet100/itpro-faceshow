@@ -58,18 +58,16 @@ public class DTOEntityConverter {
             UserDTO userDto = (UserDTO) resObj;
 
             // rooms
-            List<Long> roomIds = new ArrayList<>();
-            for (RoomEntity roomEntity : roomRepo.findAll())
-                if (roomEntity.getHostUser().getUsername().equals(userEntity.getUsername()))
-                    roomIds.add(roomEntity.getId());
-            userDto.setRoomIds(roomIds);
+            for (RoomEntity roomEntity : userEntity.getRooms())
+                userDto.getRoomIds().add(roomEntity.getId());
 
             // messages
-            List<Long> messageIds = new ArrayList<>();
-            for (MessageEntity messageEntity : messageRepo.findAll())
-                if (messageEntity.getUser().getUsername().equals(userEntity.getUsername()))
-                    messageIds.add(messageEntity.getId());
-            userDto.setMessageIds(messageIds);
+            for (MessageEntity messageEntity : userEntity.getMessages())
+                userDto.getMessageIds().add(messageEntity.getId());
+
+            // joinedRooms
+            for (RoomEntity roomEntity : userEntity.getJoinedRooms())
+                userDto.getJoinedRoomIds().add(roomEntity.getId());
 
             resObj = (T)userDto;
         }
@@ -79,11 +77,8 @@ public class DTOEntityConverter {
             RoomDTO roomDto = (RoomDTO)resObj;
 
             // messages
-            List<Long> messageIds = new ArrayList<>();
-            for (MessageEntity messageEntity: messageRepo.findAll())
-                if (messageEntity.getRoom().getId().equals(roomEntity.getId()))
-                    messageIds.add(messageEntity.getId());
-            roomDto.setMessageIds(messageIds);
+            for (MessageEntity messageEntity: roomEntity.getMessages())
+                    roomDto.getMessageIds().add(messageEntity.getId());
 
             resObj = (T)roomDto;
         }
@@ -108,11 +103,21 @@ public class DTOEntityConverter {
             // messages
             if (userDto.getMessageIds() != null) {
                 for (Long id: userDto.getMessageIds()) {
-                    MessageEntity messageEntity = messageRepo.findById(id).orElse(null);
+                    MessageEntity messageEntity = messageRepo.getById(id);
                     if (messageEntity != null)
                         userEntity.getMessages().add(messageEntity);
                 }
             }
+
+            //joinedRooms
+            if (userDto.getJoinedRoomIds() != null) {
+                for (Long id: userDto.getJoinedRoomIds()) {
+                    RoomEntity roomEntity = roomRepo.getById(id);
+                    if (roomEntity != null)
+                        userEntity.getJoinedRooms().add(roomEntity);
+                }
+            }
+
             resObj = (T)userEntity;
         }
 

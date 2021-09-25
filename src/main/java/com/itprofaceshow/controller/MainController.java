@@ -1,12 +1,11 @@
 package com.itprofaceshow.controller;
 
+import com.itprofaceshow.converter.DTOEntityConverter;
 import com.itprofaceshow.dto.UserDTO;
 import com.itprofaceshow.entity.UserEntity;
 import com.itprofaceshow.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MainController {
@@ -14,9 +13,16 @@ public class MainController {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private DTOEntityConverter converter;
+
     @GetMapping(value = "/test")
-    public UserDTO test() {
-        UserDTO userDto = userService.findAll();
+    public UserDTO test(@RequestParam String username, @RequestParam String password) {
+        UserDTO userDto = new UserDTO();
+        userDto.setUsername(username);
+        userDto.setPassword(password);
+        userDto.setFullName("Cao Dinh Sy Vy");
+        userDto = userService.save(userDto);
         return userDto;
     }
 

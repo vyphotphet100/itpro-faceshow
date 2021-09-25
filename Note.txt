@@ -1,1 +1,5 @@
-- Re-design service follow by edited database
+- See user's status in current room
+- Create room
+- Manage room
+- Send message
+- See/Edit profile

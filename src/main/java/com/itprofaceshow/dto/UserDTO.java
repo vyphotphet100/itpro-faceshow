@@ -14,6 +14,8 @@ public class UserDTO extends BaseDTO{
     private String avatar;
     private String phone;
     private String status;
+    private String token;
     private List<Long> roomIds = new ArrayList<>();
     private List<Long> messageIds = new ArrayList<>();
+    private List<Long> joinedRoomIds = new ArrayList<>();
 }
