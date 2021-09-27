@@ -24,8 +24,8 @@ public class UserService extends BaseService implements IUserService {
     }
 
     @Override
-    public UserDTO getById(String username) {
-        UserEntity userEntity = userRepo.getById(username);
+    public UserDTO findById(String username) {
+        UserEntity userEntity = userRepo.findById(username).orElse(null);
         if (userEntity == null)
             return (UserDTO)exceptionObject(new UserDTO(), "This username does not exist already.");
 

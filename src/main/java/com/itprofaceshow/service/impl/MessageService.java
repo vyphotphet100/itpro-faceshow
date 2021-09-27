@@ -25,8 +25,8 @@ public class MessageService extends BaseService implements IMessageService {
     }
 
     @Override
-    public MessageDTO getById(Long id) {
-        MessageEntity messageEntity = messageRepo.getById(id);
+    public MessageDTO findById(Long id) {
+        MessageEntity messageEntity = messageRepo.findById(id).orElse(null);
         if (messageEntity == null)
             return (MessageDTO)exceptionObject(new MessageDTO(), "This message does not exist.");
 
@@ -37,7 +37,7 @@ public class MessageService extends BaseService implements IMessageService {
 
     @Override
     public MessageDTO save(MessageDTO messageDto) {
-        MessageEntity messageEntity = messageRepo.getById(messageDto.getId());
+        MessageEntity messageEntity = messageRepo.findById(messageDto.getId()).orElse(null);
         if (messageEntity != null)
             return (MessageDTO)exceptionObject(new MessageDTO(), "This message exists already.");
 
@@ -49,7 +49,7 @@ public class MessageService extends BaseService implements IMessageService {
 
     @Override
     public MessageDTO update(MessageDTO messageDto) {
-        MessageEntity messageEntity = messageRepo.getById(messageDto.getId());
+        MessageEntity messageEntity = messageRepo.findById(messageDto.getId()).orElse(null);
         if (messageEntity == null)
             return (MessageDTO)exceptionObject(new MessageDTO(), "This message does not exist.");
 

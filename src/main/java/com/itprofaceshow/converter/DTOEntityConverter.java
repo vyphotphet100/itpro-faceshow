@@ -80,6 +80,10 @@ public class DTOEntityConverter {
             for (MessageEntity messageEntity: roomEntity.getMessages())
                     roomDto.getMessageIds().add(messageEntity.getId());
 
+            // joinedUsers
+            for(UserEntity userEntity : roomEntity.getJoinedUsers())
+                roomDto.getJoinedUserUsernames().add(userEntity.getUsername());
+
             resObj = (T)roomDto;
         }
         return resObj;
@@ -131,6 +135,14 @@ public class DTOEntityConverter {
                     MessageEntity messageEntity = messageRepo.findById(id).orElse(null);
                     if (messageEntity != null)
                         roomEntity.getMessages().add(messageEntity);
+                }
+            }
+
+            if (roomDto.getJoinedUserUsernames() != null) {
+                for (String username: roomDto.getJoinedUserUsernames()) {
+                    UserEntity userEntity = userRepo.getById(username);
+                    if (userEntity != null)
+                        roomEntity.getJoinedUsers().add(userEntity);
                 }
             }
 

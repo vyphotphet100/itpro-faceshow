@@ -45,11 +45,7 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<MessageEntity> messages = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "join_user_room",
-            joinColumns = @JoinColumn(name = "username"),
-            inverseJoinColumns = @JoinColumn(name = "room_id")
-    )
+    @ManyToMany(mappedBy = "joinedUsers")
     private List<RoomEntity> joinedRooms = new ArrayList<>();
 
 }

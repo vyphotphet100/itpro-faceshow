@@ -25,7 +25,11 @@ public class RoomEntity extends BaseEntity{
     @OneToMany(mappedBy = "room")
     private List<MessageEntity> messages = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "joinedRooms")
+    @ManyToMany
+    @JoinTable(name = "join_user_room",
+            joinColumns = @JoinColumn(name = "room_id"),
+            inverseJoinColumns = @JoinColumn(name = "username")
+    )
     private List<UserEntity> joinedUsers = new ArrayList<>();
 
     @Column(name = "name", columnDefinition = "TEXT")

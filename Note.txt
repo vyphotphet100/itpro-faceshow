@@ -1,5 +1,6 @@
-- See user's status in current room
-- Create room
 - Manage room
+    + Add user -> OK
+    + Invite user
+    + Remove user -> OK
 - Send message
 - See/Edit profile
