@@ -1,17 +1,26 @@
 package com.itprofaceshow.service.impl;
 
+import com.itprofaceshow.dto.RoomDTO;
 import com.itprofaceshow.dto.UserDTO;
+import com.itprofaceshow.entity.RoomEntity;
 import com.itprofaceshow.entity.UserEntity;
+import com.itprofaceshow.repository.RoomRepository;
 import com.itprofaceshow.repository.UserRepository;
 import com.itprofaceshow.service.IUserService;
 import com.itprofaceshow.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+
 @Service
 public class UserService extends BaseService implements IUserService {
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private RoomRepository roomRepo;
 
     @Override
     public UserDTO findAll() {
@@ -30,6 +39,11 @@ public class UserService extends BaseService implements IUserService {
             return (UserDTO)exceptionObject(new UserDTO(), "This username does not exist already.");
 
         UserDTO userDto = converter.toDTO(userEntity, UserDTO.class);
+        userDto.setPassword(null);
+        userDto.setToken(null);
+        userDto.setJoinedRoomIds(new ArrayList<>());
+        userDto.setMessageIds(new ArrayList<>());
+        userDto.setRoomIds(new ArrayList<>());
         userDto.setMessage("Get user having username = " + username + " successfully.");
         return userDto;
     }
@@ -52,7 +66,13 @@ public class UserService extends BaseService implements IUserService {
         if (!userRepo.existsById(userDto.getUsername()))
             return (UserDTO)this.exceptionObject(new UserDTO(), "This user does not exist.");
 
-        UserEntity userEntity = converter.toEntity(userDto, UserEntity.class);
+        UserDTO updatedUser = converter.toDTO(userRepo.findById(userDto.getUsername()).orElse(null), UserDTO.class);
+        updatedUser.setPassword(userDto.getPassword());
+        updatedUser.setFullName(userDto.getFullName());
+        updatedUser.setAddress(userDto.getAddress());
+        updatedUser.setPhone(userDto.getPhone());
+
+        UserEntity userEntity = converter.toEntity(updatedUser, UserEntity.class);
         UserDTO resDto = converter.toDTO(userRepo.save(userEntity), UserDTO.class);
         resDto.setMessage("Update successfully.");
         return resDto;
@@ -84,6 +104,33 @@ public class UserService extends BaseService implements IUserService {
 
         UserDTO userDto = converter.toDTO(userEntity, UserDTO.class);
         userDto.setMessage("Login successfully.");
+        return userDto;
+    }
+
+    @Override
+    public UserDTO joinRoom(HttpServletRequest request, Long roomId, String hiddenPassword) {
+        UserEntity requestedUser = this.getRequestedUser(request);
+        if (requestedUser == null)
+            return (UserDTO)this.exceptionObject(new UserDTO(), "Requested user does not exist.");
+
+        RoomEntity roomEntity = roomRepo.findById(roomId).orElse(null);
+        if (roomEntity == null)
+            return (UserDTO)exceptionObject(new UserDTO(), "Room ID does not exist.");
+
+        if (!roomEntity.getHiddenPassword().equals(hiddenPassword))
+            return (UserDTO)exceptionObject(new UserDTO(), "Invalid password.");
+
+        for (UserEntity tmpUserEntity: roomEntity.getJoinedUsers())
+            if (tmpUserEntity.getUsername().equals(requestedUser.getUsername()))
+                return (UserDTO)this.exceptionObject(new UserDTO(), "You joined this room.");
+
+        if (roomEntity.getHostUser().getUsername().equals(requestedUser.getUsername()))
+            return (UserDTO)this.exceptionObject(new UserDTO(), "You are the host of this room.");
+
+        roomEntity.getJoinedUsers().add(requestedUser);
+        roomEntity = roomRepo.save(roomEntity);
+        UserDTO userDto = this.converter.toDTO(requestedUser, UserDTO.class);
+        userDto.setMessage(requestedUser.getUsername() + " joined the room.");
         return userDto;
     }
 }

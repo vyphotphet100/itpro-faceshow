@@ -12,4 +12,5 @@ public class RoomDTO extends BaseDTO{
     private List<Long> messageIds = new ArrayList<>();
     private List<String> joinedUserUsernames = new ArrayList<>();
     private String name;
+    private String hiddenPassword;
 }

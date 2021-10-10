@@ -4,15 +4,29 @@ import com.itprofaceshow.dto.MessageDTO;
 import com.itprofaceshow.dto.MessageDTO;
 import com.itprofaceshow.entity.MessageEntity;
 import com.itprofaceshow.entity.MessageEntity;
+import com.itprofaceshow.entity.RoomEntity;
+import com.itprofaceshow.entity.UserEntity;
 import com.itprofaceshow.repository.MessageRepository;
+import com.itprofaceshow.repository.RoomRepository;
+import com.itprofaceshow.repository.UserRepository;
 import com.itprofaceshow.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MessageService extends BaseService implements IMessageService {
     @Autowired
     private MessageRepository messageRepo;
+
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private RoomRepository roomRepo;
+
+    @Autowired
+    private SimpMessagingTemplate messageTmp;
 
     @Override
     public MessageDTO findAll() {
@@ -37,9 +51,12 @@ public class MessageService extends BaseService implements IMessageService {
 
     @Override
     public MessageDTO save(MessageDTO messageDto) {
-        MessageEntity messageEntity = messageRepo.findById(messageDto.getId()).orElse(null);
-        if (messageEntity != null)
-            return (MessageDTO)exceptionObject(new MessageDTO(), "This message exists already.");
+        MessageEntity messageEntity;
+        if (messageDto.getMessage() != null) {
+            messageEntity = messageRepo.findById(messageDto.getId()).orElse(null);
+            if (messageEntity != null)
+                return (MessageDTO)exceptionObject(new MessageDTO(), "This message exists already.");
+        }
 
         messageEntity = converter.toEntity(messageDto, MessageEntity.class);
         MessageDTO resDto = converter.toDTO(messageRepo.save(messageEntity), MessageDTO.class);
@@ -68,5 +85,53 @@ public class MessageService extends BaseService implements IMessageService {
         MessageDTO resDto = new MessageDTO();
         resDto.setMessage("Update message successfully.");
         return resDto;
+    }
+
+    @Override
+    public void sendMessageToRoom(MessageDTO messageDto) {
+        Long roomId = messageDto.getRoomId();
+        UserEntity userEntity = userRepo.findByToken(messageDto.getUserUsername());
+        if (userEntity == null) {
+//            messageDto = (MessageDTO) exceptionObject(messageDto, "Unknown user.");
+//            messageDto.setType(MessageDTO.MessageType.EXCEPTION);
+//            messageTmp.convertAndSend("/unknown", messageDto);
+            return;
+        }
+
+        RoomEntity roomEntity = roomRepo.findById(messageDto.getRoomId()).orElse(null);
+        if (roomEntity == null) {
+            messageDto = (MessageDTO) exceptionObject(messageDto, "Unknown room id.");
+            messageDto.setType(MessageDTO.MessageType.EXCEPTION);
+            messageTmp.convertAndSend("/" + userEntity.getUsername(), messageDto);
+            return;
+        }
+
+        messageDto.setUserUsername(userEntity.getUsername());
+        this.save(messageDto);
+        messageDto.setType(MessageDTO.MessageType.IN_ROOM);
+        messageTmp.convertAndSend("/room/" + roomId, messageDto);
+    }
+
+    @Override
+    public void sendInviteMessage(MessageDTO messageDto) {
+        UserEntity userEntity = userRepo.findByToken(messageDto.getUserUsername());
+        if (userEntity == null) {
+//            messageDto = (MessageDTO) exceptionObject(messageDto, "Unknown user.");
+//            messageTmp.convertAndSend(exceptionSocketPathString("unknown"), messageDto);
+            return;
+        }
+
+        RoomEntity roomEntity = roomRepo.findById(messageDto.getRoomId()).orElse(null);
+        if (roomEntity == null) {
+            messageDto = (MessageDTO) exceptionObject(messageDto, "Unknown room id.");
+            messageDto.setType(MessageDTO.MessageType.EXCEPTION);
+            messageTmp.convertAndSend("/" + userEntity.getUsername(), messageDto);
+            return;
+        }
+
+        messageDto.setUserUsername(userEntity.getUsername());
+        messageDto.setType(MessageDTO.MessageType.INVITE);
+        messageDto.setContent(roomEntity.getHiddenPassword());
+        messageTmp.convertAndSend("/" + messageDto.getReceivedUserUsername(), messageDto);
     }
 }

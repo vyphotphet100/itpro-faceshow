@@ -34,4 +34,7 @@ public class RoomEntity extends BaseEntity{
 
     @Column(name = "name", columnDefinition = "TEXT")
     private String name;
+
+    @Column(name = "hidden_password")
+    private String hiddenPassword;
 }

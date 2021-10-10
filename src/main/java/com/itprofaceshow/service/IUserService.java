@@ -1,6 +1,9 @@
 package com.itprofaceshow.service;
 
+import com.itprofaceshow.dto.RoomDTO;
 import com.itprofaceshow.dto.UserDTO;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface IUserService extends IBaseService{
     UserDTO findAll();
@@ -10,4 +13,5 @@ public interface IUserService extends IBaseService{
     UserDTO delete(String username);
 
     UserDTO login(String username, String password);
+    UserDTO joinRoom(HttpServletRequest request, Long roomId, String hiddenPassword);
 }

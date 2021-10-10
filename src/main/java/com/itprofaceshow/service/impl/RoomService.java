@@ -1,5 +1,6 @@
 package com.itprofaceshow.service.impl;
 
+import com.itprofaceshow.dto.MessageDTO;
 import com.itprofaceshow.dto.RoomDTO;
 import com.itprofaceshow.dto.UserDTO;
 import com.itprofaceshow.entity.RoomEntity;
@@ -7,12 +8,12 @@ import com.itprofaceshow.entity.UserEntity;
 import com.itprofaceshow.repository.RoomRepository;
 import com.itprofaceshow.repository.UserRepository;
 import com.itprofaceshow.service.IRoomService;
+import com.itprofaceshow.util.MyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class RoomService extends BaseService implements IRoomService {
@@ -21,6 +22,9 @@ public class RoomService extends BaseService implements IRoomService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private SimpMessagingTemplate messageTmp;
 
     @Override
     public RoomDTO findAll() {
@@ -50,6 +54,7 @@ public class RoomService extends BaseService implements IRoomService {
         if (roomEntity.getHostUser() == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Host user is invalid.");
 
+        roomEntity.setHiddenPassword(MyUtil.generateRandomString(10));
         RoomDTO resDto = converter.toDTO(roomRepo.save(roomEntity), RoomDTO.class);
         resDto.setMessage("Creating a room successfully.");
         return resDto;
@@ -79,7 +84,10 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO getUserStatus(Long id) {
+    public RoomDTO getUserStatus(HttpServletRequest request, Long id) {
+        if (getRequestedUser(request) == null)
+            return (RoomDTO)exceptionObject(new RoomDTO(), "Requested user does not exist.");
+
         RoomEntity roomEntity = roomRepo.findById(id).orElse(null);
         if (roomEntity == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "This room id doesn't exist.");
@@ -124,7 +132,8 @@ public class RoomService extends BaseService implements IRoomService {
 
     @Override
     public RoomDTO removeUser(HttpServletRequest request, Long roomId, String username) {
-        if (this.getRequestedUser(request) == null)
+        UserEntity requestedUser = this.getRequestedUser(request);
+        if (requestedUser == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Requested user does not exist.");
 
         RoomEntity roomEntity = roomRepo.findById(roomId).orElse(null);
@@ -133,7 +142,7 @@ public class RoomService extends BaseService implements IRoomService {
         if (roomEntity == null || userEntity == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Room or User does not exist.");
 
-        if (!this.getRequestedUser(request).getUsername().equals(roomEntity.getHostUser().getUsername()))
+        if (!requestedUser.getUsername().equals(roomEntity.getHostUser().getUsername()))
             return (RoomDTO)exceptionObject(new RoomDTO(), "You are not the host of this room.");
 
         Boolean removed = false;
@@ -147,6 +156,15 @@ public class RoomService extends BaseService implements IRoomService {
         if (!removed)
             return (RoomDTO)exceptionObject(new RoomDTO(), "User does not exist in room.");
 
+        // send remove redirect message to removed user
+        MessageDTO messageDto = new MessageDTO();
+        messageDto.setUserUsername(requestedUser.getUsername());
+        messageDto.setReceivedUserUsername(username);
+        messageDto.setType(MessageDTO.MessageType.REMOVE_REDIRECT);
+        messageDto.setContent("You are removed by the host of this room.");
+        messageTmp.convertAndSend("/" + username, messageDto);
+
+        // return result
         RoomDTO roomDto = converter.toDTO(roomEntity, RoomDTO.class);
         roomDto.setMessage("Removed " + username + ".");
         return roomDto;

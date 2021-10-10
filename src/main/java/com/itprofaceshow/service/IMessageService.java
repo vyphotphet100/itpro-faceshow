@@ -8,4 +8,8 @@ public interface IMessageService extends IBaseService{
     MessageDTO save(MessageDTO messageDto);
     MessageDTO update(MessageDTO messageDto);
     MessageDTO delete(Long id);
+
+    //socket
+    void sendMessageToRoom(MessageDTO messageDto);
+    void sendInviteMessage(MessageDTO messageDto);
 }
