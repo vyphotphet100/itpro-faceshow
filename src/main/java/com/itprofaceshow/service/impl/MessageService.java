@@ -89,7 +89,7 @@ public class MessageService extends BaseService implements IMessageService {
 
     @Override
     public void sendMessageToRoom(MessageDTO messageDto) {
-        Long roomId = messageDto.getRoomId();
+        String roomId = messageDto.getRoomId();
         UserEntity userEntity = userRepo.findByToken(messageDto.getUserUsername());
         if (userEntity == null) {
 //            messageDto = (MessageDTO) exceptionObject(messageDto, "Unknown user.");

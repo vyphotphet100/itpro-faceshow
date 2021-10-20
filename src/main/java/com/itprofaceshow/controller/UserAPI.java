@@ -58,7 +58,7 @@ public class UserAPI {
     }
 
     @PostMapping("/user/join-room/{roomId}/{hiddenPassword}")
-    public UserDTO joinRoom(HttpServletRequest request, @PathVariable Long roomId, @PathVariable String hiddenPassword) {
+    public UserDTO joinRoom(HttpServletRequest request, @PathVariable String roomId, @PathVariable String hiddenPassword) {
         return userService.joinRoom(request, roomId, hiddenPassword);
     }
 }

@@ -1,15 +1,5 @@
 FE: https://github.com/PhongNguyen3005/ITProject.git
 BE: https://github.com/vyphotphet100/itpro-faceshow.git
 
-- Controller:
-    + Login -> OK
-    + Create an account -> OK
-    + See user's status in current room -> OK
-    + Create room -> OK
-    + Manage room:
-        - Invite user -> OK
-        - Remove user -> OK
-        - Send message -> OK
-    + See/Edit profile -> OK
-    + Join to room after accepting the invitation -> OK
+- Thiết kế user-request.js
 

@@ -37,7 +37,7 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO findById(Long id) {
+    public RoomDTO findById(String id) {
         RoomEntity roomEntity = roomRepo.findById(id).orElse(null);
         if (roomEntity == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "This room does not exist.");
@@ -73,7 +73,7 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO delete(Long id) {
+    public RoomDTO delete(String id) {
         if (!roomRepo.existsById(id))
             return (RoomDTO)exceptionObject(new RoomDTO(), "This room does not exist.");
 
@@ -84,7 +84,7 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO getUserStatus(HttpServletRequest request, Long id) {
+    public RoomDTO getUserStatus(HttpServletRequest request, String id) {
         if (getRequestedUser(request) == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Requested user does not exist.");
 
@@ -106,7 +106,7 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO addUser(HttpServletRequest request, Long roomId, String username) {
+    public RoomDTO addUser(HttpServletRequest request, String roomId, String username) {
         if (this.getRequestedUser(request) == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Requested user does not exist.");
 
@@ -131,7 +131,7 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO removeUser(HttpServletRequest request, Long roomId, String username) {
+    public RoomDTO removeUser(HttpServletRequest request, String roomId, String username) {
         UserEntity requestedUser = this.getRequestedUser(request);
         if (requestedUser == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Requested user does not exist.");

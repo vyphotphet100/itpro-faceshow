@@ -16,7 +16,7 @@ public class RoomAPI {
     private RoomService roomService;
 
     @GetMapping(value = "/room/{id}/get-user-status")
-    public RoomDTO getUserStatus(HttpServletRequest request, @PathVariable("id") Long id) {
+    public RoomDTO getUserStatus(HttpServletRequest request, @PathVariable("id") String id) {
         return roomService.getUserStatus(request, id);
     }
 
@@ -26,7 +26,7 @@ public class RoomAPI {
     }
 
     @PostMapping(value = "/room/{roomId}/remove-user/{username}")
-    public RoomDTO removeUser(HttpServletRequest request, @PathVariable Long roomId, @PathVariable String username) {
+    public RoomDTO removeUser(HttpServletRequest request, @PathVariable String roomId, @PathVariable String username) {
         return roomService.removeUser(request, roomId, username);
     }
 }

@@ -15,8 +15,7 @@ import java.util.List;
 public class RoomEntity extends BaseEntity{
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "host_username")

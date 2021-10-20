@@ -108,7 +108,7 @@ public class UserService extends BaseService implements IUserService {
     }
 
     @Override
-    public UserDTO joinRoom(HttpServletRequest request, Long roomId, String hiddenPassword) {
+    public UserDTO joinRoom(HttpServletRequest request, String roomId, String hiddenPassword) {
         UserEntity requestedUser = this.getRequestedUser(request);
         if (requestedUser == null)
             return (UserDTO)this.exceptionObject(new UserDTO(), "Requested user does not exist.");

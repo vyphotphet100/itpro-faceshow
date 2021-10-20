@@ -1,0 +1,3 @@
+class Base {
+    static apiUrl = '';
+}

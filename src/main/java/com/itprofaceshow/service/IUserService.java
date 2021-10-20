@@ -13,5 +13,5 @@ public interface IUserService extends IBaseService{
     UserDTO delete(String username);
 
     UserDTO login(String username, String password);
-    UserDTO joinRoom(HttpServletRequest request, Long roomId, String hiddenPassword);
+    UserDTO joinRoom(HttpServletRequest request, String roomId, String hiddenPassword);
 }

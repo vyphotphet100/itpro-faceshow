@@ -15,7 +15,7 @@ public class MessageDTO extends BaseDTO{
     private Long id;
     private String content;
     private String userUsername;
-    private Long roomId;
+    private String roomId;
     private String receivedUserUsername;
     private MessageType type;
 }

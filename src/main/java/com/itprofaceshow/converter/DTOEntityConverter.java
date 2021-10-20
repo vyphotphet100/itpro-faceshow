@@ -97,7 +97,7 @@ public class DTOEntityConverter {
 
             // rooms
             if (userDto.getRoomIds() != null) {
-                for (Long id: userDto.getRoomIds()) {
+                for (String id: userDto.getRoomIds()) {
                     RoomEntity roomEntity = roomRepo.findById(id).orElse(null);
                     if (roomEntity != null)
                         userEntity.getRooms().add(roomEntity);
@@ -115,7 +115,7 @@ public class DTOEntityConverter {
 
             //joinedRooms
             if (userDto.getJoinedRoomIds() != null) {
-                for (Long id: userDto.getJoinedRoomIds()) {
+                for (String id: userDto.getJoinedRoomIds()) {
                     RoomEntity roomEntity = roomRepo.getById(id);
                     if (roomEntity != null)
                         userEntity.getJoinedRooms().add(roomEntity);

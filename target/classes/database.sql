@@ -3,21 +3,18 @@ VALUES ('user1', '123456', 'Nguyen Van A', 'TPHCM', '0123456789', 'OFFLINE', 'ad
        ('user2', '123456', 'Dinh Thi B', 'Quang Binh', '0123456789', 'ONLINE', 'adfasdfasdfasdfsdf123abc'),
        ('user3', '123456', 'Cao Van C', 'Can Tho', '0123456789', 'BUSY', 'adfasdfasdfasdfsdf345abc');
 
-INSERT INTO room(`host_username`, `name`, `hidden_password`)
-VALUES ('user1', 'Phòng 1', '12345678_1'),
-       ('user1', 'Phòng 2', '12345678_2'),
-       ('user2', 'Phòng 3', '12345678_3'),
-       ('user2', 'Phòng 4', '12345678_4'),
-       ('user3', 'Phòng 5', '12345678_5'),
-       ('user3', 'Phòng 6', '12345678_6'),
-       ('user3', 'Phòng 7', '12345678_7');
+INSERT INTO room(`id`, `host_username`, `name`, `hidden_password`)
+VALUES ('1', 'user1', 'Phòng 1', '12345678_1'),
+       ('2', 'user1', 'Phòng 2', '12345678_2'),
+       ('3', 'user2', 'Phòng 3', '12345678_3'),
+       ('4', 'user2', 'Phòng 4', '12345678_4'),
+       ('5', 'user3', 'Phòng 5', '12345678_5'),
+       ('6', 'user3', 'Phòng 6', '12345678_6'),
+       ('7', 'user3', 'Phòng 7', '12345678_7');
 
 INSERT INTO join_user_room(`username`, `room_id`)
-VALUES ('user1', 1),
-       ('user1', 2),
-       ('user2', 5),
+VALUES ('user2', 5),
        ('user2', 2),
-       ('user3', 5),
        ('user3', 1),
        ('user3', 4);
 
