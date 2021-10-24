@@ -45,6 +45,7 @@ class UserRequest {
             url: Base.apiUrl + '/user/update-profile',
             type: 'POST',
             async: false,
+            headers: { 'Authorization': 'Token ' + getCookie('token') },
             contentType: 'application/json',
             data: JSON.stringify(userDto),
             success: function(userDto) {
@@ -74,12 +75,30 @@ class UserRequest {
     }
 
     static sendMessageToRoom(messageDto) {
-        stompClient.send("/user/send-message-to-room", {}, JSON.stringify(
-            {
-                'content': 'xin chào',
-                'roomId' : '1',
-                'userUsername' : 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InJvb21JZHMiOlsiMSIsIjIiXSwiYWRkcmVzcyI6IlRQSENNIiwiam9pbmVkUm9vbUlkcyI6W10sInJlcXVlc3RMaXN0IjpbXSwibWVzc2FnZUlkcyI6WzEsMl0sImZ1bGxOYW1lIjoiTmd1eWVuIFZhbiBBIiwiYXZhdGFyIjpudWxsLCJtZXNzYWdlIjpudWxsLCJ0b2tlbiI6IjMyMWNiYWZkc2ZkIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJjcmVhdGVkRGF0ZSI6bnVsbCwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiaHR0cFN0YXR1cyI6bnVsbCwibW9kaWZpZWREYXRlIjpudWxsLCJyZXN1bHRMaXN0IjpbXSwidXNlcm5hbWUiOiJ1c2VyMSIsInN0YXR1cyI6Ik9GRkxJTkUifX0.H-vnkqBLLo7qIs0CiyEI5wJT_PIfVPkoKxP4G6AsTi4'
+        // userUsername must be token code
+        stompClient.send("/user/send-message-to-room", {}, JSON.stringify(messageDto));
+    }
+
+    static sendInviteMessage(messageDto) {
+        // userUsername must be token code
+        stompClient.send("/user/send-invite-message", {}, JSON.stringify(messageDto));
+    }
+
+    static joinRoom(roomId, hiddenPassword) {
+        return $.ajax({
+            url: Base.apiUrl + '/user/join-room/' + roomId + '/' + hiddenPassword,
+            type: 'POST',
+            async: false,
+            headers: { 'Authorization': 'Token ' + getCookie('token') },
+            contentType: 'application/json',
+            data: JSON.stringify(),
+            success: function(userDto) {
+                return userDto;
+            },
+            error: function(error) {
+                alert(error.responseJSON.message);
+                return error;
             }
-        ));
+        }).responseJSON;
     }
 }

@@ -1,5 +1,5 @@
 FE: https://github.com/PhongNguyen3005/ITProject.git
 BE: https://github.com/vyphotphet100/itpro-faceshow.git
 
-- Thiết kế user-request.js
+- Thiết kế room-request.js
 
