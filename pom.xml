@@ -12,6 +12,7 @@
     <artifactId>itpro-faceshow</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>itpro-faceshow</name>
+    <packaging>war</packaging>
     <description>IT Project - FaceShow</description>
     <properties>
         <java.version>11</java.version>
@@ -92,6 +93,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${parent.version}</version>
             </plugin>
         </plugins>
     </build>
