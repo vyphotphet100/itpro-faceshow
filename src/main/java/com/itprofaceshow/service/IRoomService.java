@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface IRoomService extends IBaseService{
     RoomDTO findAll();
     RoomDTO findById(String id);
-    RoomDTO save(HttpServletRequest request); // create room
+    RoomDTO save(HttpServletRequest request, String roomId); // create room
     RoomDTO update(RoomDTO roomDto);
     RoomDTO delete(String id);
 

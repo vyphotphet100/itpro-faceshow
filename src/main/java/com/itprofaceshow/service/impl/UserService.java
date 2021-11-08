@@ -36,7 +36,7 @@ public class UserService extends BaseService implements IUserService {
     public UserDTO findById(String username) {
         UserEntity userEntity = userRepo.findById(username).orElse(null);
         if (userEntity == null)
-            return (UserDTO)exceptionObject(new UserDTO(), "This username does not exist already.");
+            return (UserDTO)exceptionObject(new UserDTO(), "This username does not exist.");
 
         UserDTO userDto = converter.toDTO(userEntity, UserDTO.class);
         userDto.setPassword(null);

@@ -2,15 +2,16 @@ package com.itprofaceshow.controller;
 
 import com.itprofaceshow.dto.MessageDTO;
 import com.itprofaceshow.dto.UserDTO;
-import com.itprofaceshow.repository.MessageRepository;
 import com.itprofaceshow.service.impl.MessageService;
 import com.itprofaceshow.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin
 @RestController
 public class UserAPI {
     @Autowired
@@ -20,31 +21,43 @@ public class UserAPI {
     private MessageService messageService;
 
     @PostMapping(value = "/user/log-in")
-    public UserDTO login(@RequestBody UserDTO userDto) {
-        if (userDto.getUsername() == null || userDto.getPassword() == null)
-            return (UserDTO) userService.exceptionObject(userDto, "Username or Password is empty.");
+    public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDto) {
+        UserDTO resDto = new UserDTO();
+        if (userDto.getUsername() == null || userDto.getPassword() == null ||
+                userDto.getUsername().equals("") || userDto.getPassword().equals("")) {
+            resDto = (UserDTO) userService.exceptionObject(userDto, "Username or Password is empty.");
+            return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
+        }
 
-        return userService.login(userDto.getUsername(), userDto.getPassword());
+        resDto = userService.login(userDto.getUsername(), userDto.getPassword());
+        return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
     }
 
     @PostMapping(value = "/user/create-account")
-    public UserDTO creatAccount(@RequestBody UserDTO userDto) {
-        if (userDto.getUsername() == null ||
-            userDto.getPassword() == null ||
-            userDto.getFullName() == null)
-            return (UserDTO)userService.exceptionObject(userDto, "Some fields are empty. Please check again.");
+    public ResponseEntity<UserDTO> creatAccount(@RequestBody UserDTO userDto) {
+        UserDTO resDto = null;
 
-        return userService.save(userDto);
+        if (userDto.getUsername() == null ||
+                userDto.getPassword() == null ||
+                userDto.getFullName() == null) {
+            resDto = (UserDTO)userService.exceptionObject(userDto, "Some fields are empty. Please check again.");
+            return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
+        }
+
+        resDto = userService.save(userDto);
+        return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
     }
 
     @PostMapping(value = "/user/update-profile")
-    public UserDTO update(@RequestBody UserDTO userDto) {
-        return userService.update(userDto);
+    public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDto) {
+        UserDTO resDto = userService.update(userDto);
+        return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
     }
 
     @GetMapping(value = "/user/{username}/get-profile")
-    public UserDTO getProfile(@PathVariable String username) {
-        return userService.findById(username);
+    public ResponseEntity<UserDTO> getProfile(@PathVariable String username) {
+        UserDTO resDto = userService.findById(username);
+        return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
     }
 
     @MessageMapping("/user/send-message-to-room")
@@ -58,7 +71,8 @@ public class UserAPI {
     }
 
     @PostMapping("/user/join-room/{roomId}/{hiddenPassword}")
-    public UserDTO joinRoom(HttpServletRequest request, @PathVariable String roomId, @PathVariable String hiddenPassword) {
-        return userService.joinRoom(request, roomId, hiddenPassword);
+    public ResponseEntity<UserDTO> joinRoom(HttpServletRequest request, @PathVariable String roomId, @PathVariable String hiddenPassword) {
+        UserDTO resDto = userService.joinRoom(request, roomId, hiddenPassword);
+        return new ResponseEntity<UserDTO>(resDto, resDto.getHttpStatus());
     }
 }

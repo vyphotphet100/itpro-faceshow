@@ -48,14 +48,14 @@ public class RoomService extends BaseService implements IRoomService {
     }
 
     @Override
-    public RoomDTO save(HttpServletRequest request) {
+    public RoomDTO save(HttpServletRequest request, String roomId) {
         RoomEntity roomEntity = new RoomEntity();
         roomEntity.setHostUser(this.getRequestedUser(request));
         if (roomEntity.getHostUser() == null)
             return (RoomDTO)exceptionObject(new RoomDTO(), "Host user is invalid.");
 
         roomEntity.setHiddenPassword(MyUtil.generateRandomString(10));
-        roomEntity.setId(MyUtil.generateRandomString(5));
+        roomEntity.setId(roomId);
         RoomDTO resDto = converter.toDTO(roomRepo.save(roomEntity), RoomDTO.class);
         resDto.setMessage("Creating a room successfully.");
         return resDto;

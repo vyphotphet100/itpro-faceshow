@@ -13,7 +13,7 @@ public class BaseDTO {
     private Date createdDate;
     private Date modifiedDate;
 
-    private HttpStatus httpStatus;
+    private HttpStatus httpStatus = HttpStatus.OK;
     private String message;
     private List<Object> requestList = new ArrayList<>();
     private List<Object> resultList = new ArrayList<>();

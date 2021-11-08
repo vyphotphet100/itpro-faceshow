@@ -3,30 +3,38 @@ package com.itprofaceshow.controller;
 import com.itprofaceshow.dto.RoomDTO;
 import com.itprofaceshow.service.impl.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin
 @RestController
 public class RoomAPI {
     @Autowired
     private RoomService roomService;
 
     @GetMapping(value = "/room/{id}/get-user-status")
-    public RoomDTO getUserStatus(HttpServletRequest request, @PathVariable("id") String id) {
-        return roomService.getUserStatus(request, id);
+    public ResponseEntity<RoomDTO> getUserStatus(HttpServletRequest request, @PathVariable("id") String id) {
+        RoomDTO resDto = roomService.getUserStatus(request, id);
+        return new ResponseEntity<RoomDTO>(resDto, resDto.getHttpStatus());
     }
 
-    @PostMapping(value = "/room/create-room")
-    public RoomDTO createRoom(HttpServletRequest request) {
-        return roomService.save(request);
+    @GetMapping(value = "/room/{id}")
+    public ResponseEntity<RoomDTO> getOne(@PathVariable("id") String id) {
+        RoomDTO resDto = roomService.findById(id);
+        return new ResponseEntity<RoomDTO>(resDto, resDto.getHttpStatus());
+    }
+
+    @PostMapping(value = "/room/create-room/{roomId}")
+    public ResponseEntity<RoomDTO> createRoom(HttpServletRequest request, @PathVariable String roomId) {
+        RoomDTO resDto = roomService.save(request, roomId);
+        return new ResponseEntity<RoomDTO>(resDto, resDto.getHttpStatus());
     }
 
     @PostMapping(value = "/room/{roomId}/remove-user/{username}")
-    public RoomDTO removeUser(HttpServletRequest request, @PathVariable String roomId, @PathVariable String username) {
-        return roomService.removeUser(request, roomId, username);
+    public ResponseEntity<RoomDTO> removeUser(HttpServletRequest request, @PathVariable String roomId, @PathVariable String username) {
+        RoomDTO resDto = roomService.removeUser(request, roomId, username);
+        return new ResponseEntity<RoomDTO>(resDto, resDto.getHttpStatus());
     }
 }
